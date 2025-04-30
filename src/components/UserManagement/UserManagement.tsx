@@ -39,9 +39,8 @@ export const UserManagement = () => {
 
   const { data: users = [], isLoading: isLoadingUsers } = useUsers();
   const { data: roles = [], isLoading: isLoadingRoles } = useRoles();
-  const { data: modules = [], isLoading: isLoadingModules } = useModules();
-  const { data: permissions = [], isLoading: isLoadingPermissions } =
-    usePermissions();
+  const { data: modules = [] } = useModules();
+  const { data: permissions = [] } = usePermissions();
 
   const updateUserRolesMutation = useUpdateUserRoles();
   const updateRoleModulesMutation = useUpdateRoleModules();
