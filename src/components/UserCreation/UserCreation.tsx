@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,19 +9,8 @@ import {
   Typography,
   Checkbox,
 } from "@mui/material";
-import { api } from "../../services/api";
-import { Role } from "../../types";
-
-interface CreateAdminUserDto {
-  email: string;
-  password: string;
-  username: string;
-  contact_person: string;
-  designation: string;
-  org_name: string;
-  phone_no: string;
-  roleIds: number[];
-}
+import { useRoles, useCreateAdminUser } from "../../hooks/useApi";
+import { CreateAdminUserDto, Role } from "../../types";
 
 export const UserCreation = () => {
   const [formData, setFormData] = useState<CreateAdminUserDto>({
@@ -34,27 +23,9 @@ export const UserCreation = () => {
     phone_no: "",
     roleIds: [],
   });
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState({
-    roles: false,
-    createAdmin: false,
-  });
 
-  useEffect(() => {
-    fetchRoles();
-  }, []);
-
-  const fetchRoles = async () => {
-    setLoading((prev) => ({ ...prev, roles: true }));
-    try {
-      const response = await api.getAllRoles();
-      setRoles(response.data.data);
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-    } finally {
-      setLoading((prev) => ({ ...prev, roles: false }));
-    }
-  };
+  const { data: roles = [] } = useRoles();
+  const createAdminUserMutation = useCreateAdminUser();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -72,9 +43,8 @@ export const UserCreation = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading((prev) => ({ ...prev, createAdmin: true }));
     try {
-      await api.createAdminUser(formData);
+      await createAdminUserMutation.mutateAsync(formData);
       // Reset form
       setFormData({
         email: "",
@@ -88,8 +58,6 @@ export const UserCreation = () => {
       });
     } catch (error) {
       console.error("Error creating admin user:", error);
-    } finally {
-      setLoading((prev) => ({ ...prev, createAdmin: false }));
     }
   };
 
@@ -177,18 +145,18 @@ export const UserCreation = () => {
             Assign Roles
           </Typography>
           <FormGroup>
-            {roles.map((role, index) => (
+            {roles.map((role: Role) => (
               <FormControlLabel
-                key={index}
+                key={role.id}
                 control={
                   <Checkbox
-                    checked={formData.roleIds.includes(role?.id)}
+                    checked={formData.roleIds.includes(role.id)}
                     onChange={(e) =>
-                      handleRoleSelection(role?.id, e.target.checked)
+                      handleRoleSelection(role.id, e.target.checked)
                     }
                   />
                 }
-                label={role?.role_name}
+                label={role.role_name}
               />
             ))}
           </FormGroup>
@@ -200,7 +168,7 @@ export const UserCreation = () => {
           color="primary"
           fullWidth
           sx={{ mt: 3 }}
-          disabled={loading.createAdmin}
+          disabled={createAdminUserMutation.isPending}
         >
           Create Admin User
         </Button>
