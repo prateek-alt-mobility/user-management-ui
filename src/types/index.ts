@@ -14,10 +14,8 @@ export interface CreateCustomerUserDto {
 }
 
 export interface Role {
-  role: {
-    id: number;
-    role_name: string;
-  }
+  id: number;
+  role_name: string;
 }
 
 export interface Module {
@@ -35,4 +33,4 @@ export interface User {
   username: string;
   email: string;
   adminRoleMaps?: Role[];
-} 
+}

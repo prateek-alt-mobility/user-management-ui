@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   TextField,
   Typography,
   Checkbox,
-} from '@mui/material';
-import { api } from '../../services/api';
-import { Role } from '../../types';
+} from "@mui/material";
+import { api } from "../../services/api";
+import { Role } from "../../types";
 
 interface CreateAdminUserDto {
   email: string;
@@ -29,13 +25,13 @@ interface CreateAdminUserDto {
 
 export const UserCreation = () => {
   const [formData, setFormData] = useState<CreateAdminUserDto>({
-    email: '',
-    password: '',
-    username: '',
-    contact_person: '',
-    designation: '',
-    org_name: '',
-    phone_no: '',
+    email: "",
+    password: "",
+    username: "",
+    contact_person: "",
+    designation: "",
+    org_name: "",
+    phone_no: "",
     roleIds: [],
   });
   const [roles, setRoles] = useState<Role[]>([]);
@@ -49,14 +45,14 @@ export const UserCreation = () => {
   }, []);
 
   const fetchRoles = async () => {
-    setLoading(prev => ({ ...prev, roles: true }));
+    setLoading((prev) => ({ ...prev, roles: true }));
     try {
       const response = await api.getAllRoles();
       setRoles(response.data.data);
     } catch (error) {
-      console.error('Error fetching roles:', error);
+      console.error("Error fetching roles:", error);
     } finally {
-      setLoading(prev => ({ ...prev, roles: false }));
+      setLoading((prev) => ({ ...prev, roles: false }));
     }
   };
 
@@ -76,29 +72,29 @@ export const UserCreation = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(prev => ({ ...prev, createAdmin: true }));
+    setLoading((prev) => ({ ...prev, createAdmin: true }));
     try {
       await api.createAdminUser(formData);
       // Reset form
       setFormData({
-        email: '',
-        password: '',
-        username: '',
-        contact_person: '',
-        designation: '',
-        org_name: '',
-        phone_no: '',
+        email: "",
+        password: "",
+        username: "",
+        contact_person: "",
+        designation: "",
+        org_name: "",
+        phone_no: "",
         roleIds: [],
       });
     } catch (error) {
-      console.error('Error creating admin user:', error);
+      console.error("Error creating admin user:", error);
     } finally {
-      setLoading(prev => ({ ...prev, createAdmin: false }));
+      setLoading((prev) => ({ ...prev, createAdmin: false }));
     }
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
+    <Paper elevation={1} sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
       <Typography variant="h5" gutterBottom>
         Create Admin User
       </Typography>
@@ -181,16 +177,18 @@ export const UserCreation = () => {
             Assign Roles
           </Typography>
           <FormGroup>
-            {roles.map((role) => (
+            {roles.map((role, index) => (
               <FormControlLabel
-                key={role.id}
+                key={index}
                 control={
                   <Checkbox
-                    checked={formData.roleIds.includes(role.id)}
-                    onChange={(e) => handleRoleSelection(role.id, e.target.checked)}
+                    checked={formData.roleIds.includes(role?.id)}
+                    onChange={(e) =>
+                      handleRoleSelection(role?.id, e.target.checked)
+                    }
                   />
                 }
-                label={role.role_name}
+                label={role?.role_name}
               />
             ))}
           </FormGroup>
@@ -209,4 +207,4 @@ export const UserCreation = () => {
       </form>
     </Paper>
   );
-}; 
+};
