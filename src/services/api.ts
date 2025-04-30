@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CreateAdminUserDto, CreateCustomerUserDto } from "../types";
 
-const API_BASE_URL = "https://dev-api.alt-mobility.com/auth/adhoc";
+const API_BASE_URL = import.meta.env.VITE_BASE_URL || "base-url";
 
 export const api = {
   // User Management
